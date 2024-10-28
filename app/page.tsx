@@ -1,12 +1,15 @@
-
+import Link from 'next/link'
 export default function Home() {
   return (
-    <div className = "w-screen h-screen bg-black flex justify-center text-white items-center">
-      <div>
-        <h1 className="text-5xl text-green-50" >The best journalling app out there, period.</h1>
-        <p>Perfect for tracking your mood, and everything else if you would allow 😉</p>
+    <div className = "w-screen h-screen bg-gray-700 flex justify-center text-white items-center">
+      <div className="w-full max-w-[600px] mx-auto">
+        <h1 className="text-5xl text-green-50 mb-4" >The best journalling app out there, period.</h1>
+        <p className = "text-2xl text-white/60 mb-4">Perfect for tracking your mood, and everything else if you would allow 😉</p>
         <div>
-          <button>Get started! button lol</button>
+          <Link href = "/journal">
+          <button className = "bg-black px-4 py-2 rounded-lg text-xl">Get started!</button>
+          </Link>
+        
         </div>
       </div>
     </div>
