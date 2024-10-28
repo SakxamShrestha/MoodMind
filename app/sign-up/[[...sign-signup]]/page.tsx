@@ -1,7 +1,21 @@
-import {SignUp} from "@clerk/nextjs";
-const SignUpPage = () => {
-    return <SignUp afterSignOutUrl="/new-user" forceRedirectUrl="/new-user"/>
+import { SignUp } from '@clerk/nextjs';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
+export default function SignUpPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    // Redirect to /new-user after a successful sign-up
+    // You can add other logic here if needed
+    router.push('/new-user');
+  }, [router]);
+
+  return (
+    <SignUp
+      path="/sign-up"
+      routing="path"
+      signInUrl="/sign-in"
+    />
+  );
 }
-
-export default SignUp; 
