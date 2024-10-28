@@ -9,76 +9,76 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"           // Specifies MySQL as the database provider
-  url      = env("DATABASE_URL") // The connection URL for the database, loaded from environment variables
-  relationMode = "prisma"       // Sets the relation mode for handling relations in the schema
+  provider     = "mysql" // Specifies MySQL as the database provider
+  url          = env("DATABASE_URL") // The connection URL for the database, loaded from environment variables
+  relationMode = "prisma" // Sets the relation mode for handling relations in the schema
 }
 
 // User model to store basic user information
 model User {
-  id        String     @id @default(uuid()) // Unique identifier for each user, generated as a UUID
-  clerkId   String     @unique              // Unique identifier tied to Clerk authentication
-  email     String     @unique              // User's email, set as unique for uniqueness constraints
-  name      String?                          // Optional field for the user's name
-  createdAt DateTime   @default(now())       // Timestamp of user creation, defaults to the current date/time
-  updatedAt DateTime   @updatedAt            // Timestamp that updates automatically whenever the user record is updated
-  account   Account?                         // Optional relation to an Account record
-  entries   JournalEntry[]                   // One-to-many relation to JournalEntry records
-  analysis  EntryAnalysis[]                  // One-to-many relation to EntryAnalysis records
+  id        String          @id @default(uuid()) // Unique identifier for each user, generated as a UUID
+  clerkId   String          @unique // Unique identifier tied to Clerk authentication
+  email     String          @unique // User's email, set as unique for uniqueness constraints
+  name      String? // Optional field for the user's name
+  createdAt DateTime        @default(now()) // Timestamp of user creation, defaults to the current date/time
+  updatedAt DateTime        @updatedAt // Timestamp that updates automatically whenever the user record is updated
+  account   Account? // Optional relation to an Account record
+  entries   JournalEntry[] // One-to-many relation to JournalEntry records
+  analysis  EntryAnalysis[] // One-to-many relation to EntryAnalysis records
 }
 
 // Account model representing user accounts, linked to User
 model Account {
-  id               String @id @default(uuid()) // Unique account identifier, generated as a UUID
-  userId           String                       // Foreign key referencing the User model
-  user             User   @relation(fields: [userId], references: [id]) // Relation to the User model
-  
+  id     String @id @default(uuid()) // Unique account identifier, generated as a UUID
+  userId String // Foreign key referencing the User model
+  user   User   @relation(fields: [userId], references: [id]) // Relation to the User model
+
   // Ensures that each user can only have one account
   @@unique([userId])
 }
 
 // Enum defining possible statuses for journal entries
 enum JOURNAL_ENTRY_STATUS {
-  DRAFT      // Entry is a draft
-  PUBLISHED  // Entry is published
-  ARCHIVED   // Entry is archived
+  DRAFT // Entry is a draft
+  PUBLISHED // Entry is published
+  ARCHIVED // Entry is archived
 }
 
 // JournalEntry model storing each journal entry for a user
 model JournalEntry {
   id        String   @id @default(uuid()) // Unique identifier for each journal entry, generated as a UUID
-  userId    String                         // Foreign key referencing the User model
+  userId    String // Foreign key referencing the User model
   user      User     @relation(fields: [userId], references: [id]) // Relation to the User model
-  createdAt DateTime @default(now())       // Timestamp of entry creation, defaults to the current date/time
-  updatedAt DateTime @updatedAt            // Timestamp that updates automatically whenever the entry is updated
+  createdAt DateTime @default(now()) // Timestamp of entry creation, defaults to the current date/time
+  updatedAt DateTime @updatedAt // Timestamp that updates automatically whenever the entry is updated
 
-  content   String               @db.Text           // Journal entry content, stored as text in the database
-  status    JOURNAL_ENTRY_STATUS @default(DRAFT)    // Status of the entry, defaulting to DRAFT
-  analysis  EntryAnalysis?                          // Optional one-to-one relation to an EntryAnalysis record
-  
+  content  String               @db.Text // Journal entry content, stored as text in the database
+  status   JOURNAL_ENTRY_STATUS @default(DRAFT) // Status of the entry, defaulting to DRAFT
+  analysis EntryAnalysis? // Optional one-to-one relation to an EntryAnalysis record
+
   // Ensures unique combination of userId and entry id
   @@unique([userId, id])
 }
 
 // EntryAnalysis model storing analysis of each journal entry
 model EntryAnalysis {
-  id             String   @id @default(uuid())          // Unique identifier for each analysis, generated as a UUID
-  createdAt      DateTime @default(now())               // Timestamp of analysis creation, defaults to the current date/time
-  updatedAt      DateTime @updatedAt                    // Timestamp that updates automatically whenever the analysis is updated
+  id        String   @id @default(uuid()) // Unique identifier for each analysis, generated as a UUID
+  createdAt DateTime @default(now()) // Timestamp of analysis creation, defaults to the current date/time
+  updatedAt DateTime @updatedAt // Timestamp that updates automatically whenever the analysis is updated
 
-  entryId        String                                   // Foreign key referencing the JournalEntry model
-  entry          JournalEntry @relation(fields: [entryId], references: [id], onDelete: Cascade) // Relation to the JournalEntry model, deletes analysis if the entry is deleted
+  entryId String // Foreign key referencing the JournalEntry model
+  entry   JournalEntry @relation(fields: [entryId], references: [id], onDelete: Cascade) // Relation to the JournalEntry model, deletes analysis if the entry is deleted
 
-  userId         String                                   // Foreign key referencing the User model
-  user           User @relation(fields: [userId], references: [id], onDelete: Cascade) // Relation to the User model, deletes analysis if the user is deleted
+  userId String // Foreign key referencing the User model
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade) // Relation to the User model, deletes analysis if the user is deleted
 
-  mood           String @db.Text                         // Text describing the mood identified in the analysis
-  subject        String @db.Text                         // Subject or main topic extracted from the entry
-  negative       Boolean                                 // Boolean indicating whether the analysis is negative
-  summary        String @db.Text                         // Summary of the journal entry content
-  color          String @db.Text @default("#0101fe")     // Default color associated with the entry's mood or sentiment
-  sentimentScore Float                                   // Numerical score indicating the sentiment analysis result
-  
-  @@unique([entryId])    // Ensures unique analysis per journal entry
-  @@index([userId])      // Creates an index on userId to optimize queries filtering by user
+  mood String  @db.Text // Text describing the mood identified in the analysis
+  subject String  @db.Text // Subject or main topic extracted from the entry
+  negative Boolean // Boolean indicating whether the analysis is negative
+  summary String  @db.Text // Summary of the journal entry content
+  color String @db.VarChar(7) @default("#0101fe") // Default color associated with the entry's mood or sentiment
+  sentimentScore Float // Numerical score indicating the sentiment analysis result
+
+  @@unique([entryId]) // Ensures unique analysis per journal entry
+  @@index([userId]) // Creates an index on userId to optimize queries filtering by user
 }
