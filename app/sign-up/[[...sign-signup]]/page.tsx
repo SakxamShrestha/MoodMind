@@ -1,5 +1,5 @@
 import { SignUp } from '@clerk/nextjs';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function SignUpPage() {
