@@ -1,4 +1,4 @@
-import { prisma } from '@/utils/db';
+import { prisma } from '@/util/db';
 import { getAuth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
